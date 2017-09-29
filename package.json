@@ -1,0 +1,10 @@
+{
+  "name": "kenga-window",
+  "version": "0.0.1",
+  "description": "Kenga popup window.",
+  "main": "index.js",
+  "repository": "https://github.com/marat-gainullin/kenga-window.git",
+  "author": "marat-gainullin <mg@altsoft.biz>",
+  "license": "BSD-3-Clause",
+  "private": false
+}
