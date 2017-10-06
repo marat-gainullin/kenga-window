@@ -1,47 +1,46 @@
-define([
-    'ui/utils',
-    'core/invoke',
-    'core/id',
-    './events/window-event'
-], function (
-        Ui,
-        Invoke,
-        Id,
-        WindowEvent) {
+import Ui from 'ui/utils';
+import Invoke from 'core/invoke';
+import Id from 'core/id';
+import WindowEvent from './events/window-event';
 
-    var DEFAULT_WINDOWS_SPACING_X = 25;
-    var DEFAULT_WINDOWS_SPACING_Y = 20;
+const DEFAULT_WINDOWS_SPACING_X = 25;
+const DEFAULT_WINDOWS_SPACING_Y = 20;
 
-    var platformLocation = {x: 0, y: 0};
-    var shownForms = new Map();
-    function getShownForms() {
-        return Array.from(shownForms.values());
-    }
-    function getShownForm(aFormKey) {
-        return shownForms.get(aFormKey);
-    }
+const platformLocation = {
+    x: 0,
+    y: 0
+};
+const shownForms = new Map();
 
-    function WindowPane(aView, formKey) {
+function getShownForms() {
+    return Array.from(shownForms.values());
+}
+
+function getShownForm(aFormKey) {
+    return shownForms.get(aFormKey);
+}
+class WindowPane {
+    constructor(aView, formKey) {
         if (arguments.length < 2)
             formKey = Id.generate();
-        var content;
+        let content;
         if (arguments.length < 1) {
             content = document.createElement('div');
             content.className = 'p-widget';
         } else {
             content = aView.element;
         }
-        var self = this;
-        var shell = document.createElement('div');
+        const self = this;
+        const shell = document.createElement('div');
         shell['p-widget'] = this;
         shell.className = 'p-window-shell';
-        var caption = document.createElement('div');
+        const caption = document.createElement('div');
         caption.className = 'p-window-caption';
 
         function decorationOnMove(element, onMove) {
-            Ui.on(element, Ui.Events.MOUSEDOWN, function (downEvent) {
+            Ui.on(element, Ui.Events.MOUSEDOWN, downEvent => {
                 downEvent.stopPropagation();
-                var snapshot = {
+                const snapshot = {
                     downPageX: downEvent.clientX + document.body.scrollLeft + document.documentElement.scrollLeft,
                     downPageY: downEvent.clientY + document.body.scrollTop + document.documentElement.scrollTop,
                     startLeft: shell.offsetLeft,
@@ -49,31 +48,31 @@ define([
                     startWidth: content.offsetWidth,
                     startHeight: content.offsetHeight
                 };
-                var mouseMoveReg = Ui.on(document, Ui.Events.MOUSEMOVE, function (moveEvent) {
+                const mouseMoveReg = Ui.on(document, Ui.Events.MOUSEMOVE, moveEvent => {
                     moveEvent.stopPropagation();
                     onMove(snapshot, moveEvent);
                 }, true);
-                var mouseUpReg = Ui.on(document, Ui.Events.MOUSEUP, function (upEvent) {
+                const mouseUpReg = Ui.on(document, Ui.Events.MOUSEUP, upEvent => {
                     upEvent.stopPropagation();
                     mouseMoveReg.removeHandler();
                     mouseUpReg.removeHandler();
                 }, true);
             });
         }
-        decorationOnMove(caption, function (snapshot, event) {
-            var movePageX = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-            var movePageY = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-            var newLeft = snapshot.startLeft + movePageX - snapshot.downPageX;
-            var newTop = snapshot.startTop + movePageY - snapshot.downPageY;
-            shell.style.left = (newLeft >= 0 ? newLeft : 0) + 'px';
-            shell.style.top = (newTop >= 0 ? newTop : 0) + 'px';
+        decorationOnMove(caption, (snapshot, event) => {
+            const movePageX = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+            const movePageY = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+            const newLeft = snapshot.startLeft + movePageX - snapshot.downPageX;
+            const newTop = snapshot.startTop + movePageY - snapshot.downPageY;
+            shell.style.left = `${newLeft >= 0 ? newLeft : 0}px`;
+            shell.style.top = `${newTop >= 0 ? newTop : 0}px`;
         });
 
-        var image = null;
-        var text = document.createElement('p');
+        let image = null;
+        const text = document.createElement('p');
         text.className = 'p-window-text';
         caption.appendChild(text);
-        Ui.on(caption, Ui.Events.DBLCLICK, function () {
+        Ui.on(caption, Ui.Events.DBLCLICK, () => {
             if (maximized) {
                 restore();
             } else if (!minimized) {
@@ -82,100 +81,103 @@ define([
         });
 
         function moveLeft(snapshot, event) {
-            var movePageX = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-            var newLeft = snapshot.startLeft + movePageX - snapshot.downPageX;
+            const movePageX = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+            let newLeft = snapshot.startLeft + movePageX - snapshot.downPageX;
             newLeft = newLeft >= 0 ? newLeft : 0;
-            var newWidth = snapshot.startWidth - (newLeft - snapshot.startLeft);
+            let newWidth = snapshot.startWidth - (newLeft - snapshot.startLeft);
             newWidth = newWidth >= 0 ? newWidth : 0;
-            shell.style.left = newLeft + 'px';
-            content.style.width = newWidth + 'px';
+            shell.style.left = `${newLeft}px`;
+            content.style.width = `${newWidth}px`;
         }
+
         function moveRight(snapshot, event) {
-            var movePageX = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-            var newWidth = snapshot.startWidth + movePageX - snapshot.downPageX;
+            const movePageX = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+            let newWidth = snapshot.startWidth + movePageX - snapshot.downPageX;
             newWidth = newWidth >= 0 ? newWidth : 0;
-            content.style.width = newWidth + 'px';
+            content.style.width = `${newWidth}px`;
         }
+
         function moveTop(snapshot, event) {
-            var movePageY = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-            var newTop = snapshot.startTop + movePageY - snapshot.downPageY;
+            const movePageY = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+            let newTop = snapshot.startTop + movePageY - snapshot.downPageY;
             newTop = newTop >= 0 ? newTop : 0;
-            var newHeight = snapshot.startHeight - (newTop - snapshot.startTop);
+            let newHeight = snapshot.startHeight - (newTop - snapshot.startTop);
             newHeight = newHeight >= 0 ? newHeight : 0;
-            shell.style.top = newTop + 'px';
-            content.style.height = newHeight + 'px';
+            shell.style.top = `${newTop}px`;
+            content.style.height = `${newHeight}px`;
         }
+
         function moveBottom(snapshot, event) {
-            var movePageY = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-            var newHeight = snapshot.startHeight + movePageY - snapshot.downPageY;
+            const movePageY = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+            let newHeight = snapshot.startHeight + movePageY - snapshot.downPageY;
             newHeight = newHeight >= 0 ? newHeight : 0;
-            content.style.height = newHeight + 'px';
+            content.style.height = `${newHeight}px`;
         }
-        var t = document.createElement('div');
+        const t = document.createElement('div');
         t.className = 'p-window-t';
         decorationOnMove(t, moveTop);
-        var l = document.createElement('div');
+        const l = document.createElement('div');
         l.className = 'p-window-l';
         decorationOnMove(l, moveLeft);
-        var b = document.createElement('div');
+        const b = document.createElement('div');
         b.className = 'p-window-b';
         decorationOnMove(b, moveBottom);
-        var r = document.createElement('div');
+        const r = document.createElement('div');
         r.className = 'p-window-r';
         decorationOnMove(r, moveRight);
-        var tl = document.createElement('div');
+        const tl = document.createElement('div');
         tl.className = 'p-window-tl';
-        decorationOnMove(tl, function (snapshot, event) {
+        decorationOnMove(tl, (snapshot, event) => {
             moveTop(snapshot, event);
             moveLeft(snapshot, event);
         });
-        var tr = document.createElement('div');
-        decorationOnMove(tr, function (snapshot, event) {
+        const tr = document.createElement('div');
+        decorationOnMove(tr, (snapshot, event) => {
             moveTop(snapshot, event);
             moveRight(snapshot, event);
         });
         tr.className = 'p-window-tr';
-        var bl = document.createElement('div');
+        const bl = document.createElement('div');
         bl.className = 'p-window-bl';
-        decorationOnMove(bl, function (snapshot, event) {
+        decorationOnMove(bl, (snapshot, event) => {
             moveBottom(snapshot, event);
             moveLeft(snapshot, event);
         });
-        var br = document.createElement('div');
+        const br = document.createElement('div');
         br.className = 'p-window-br';
-        decorationOnMove(br, function (snapshot, event) {
+        decorationOnMove(br, (snapshot, event) => {
             moveBottom(snapshot, event);
             moveRight(snapshot, event);
         });
 
-        [t, l, r, b, tl, tr, bl, br, caption, content].forEach(function (item) {
+        [t, l, r, b, tl, tr, bl, br, caption, content].forEach(item => {
             shell.appendChild(item);
         });
 
-        var tools = document.createElement('div');
+        const tools = document.createElement('div');
         tools.className = 'p-window-tools';
-        var closeTool = document.createElement('div');
+        const closeTool = document.createElement('div');
         closeTool.className = 'p-window-close-tool';
-        Ui.on(closeTool, Ui.Events.CLICK, function () {
+        Ui.on(closeTool, Ui.Events.CLICK, () => {
             close();
         });
-        var minimizeTool = document.createElement('div');
+        const minimizeTool = document.createElement('div');
         minimizeTool.className = 'p-window-minimize-tool';
-        Ui.on(minimizeTool, Ui.Events.CLICK, function () {
+        Ui.on(minimizeTool, Ui.Events.CLICK, () => {
             minimize();
         });
-        var restoreTool = document.createElement('div');
+        const restoreTool = document.createElement('div');
         restoreTool.className = 'p-window-restore-tool';
-        Ui.on(restoreTool, Ui.Events.CLICK, function () {
+        Ui.on(restoreTool, Ui.Events.CLICK, () => {
             restore();
         });
-        var maximizeTool = document.createElement('div');
+        const maximizeTool = document.createElement('div');
         maximizeTool.className = 'p-window-maximize-tool';
-        Ui.on(maximizeTool, Ui.Events.CLICK, function () {
+        Ui.on(maximizeTool, Ui.Events.CLICK, () => {
             maximize();
         });
         caption.appendChild(tools);
-        [minimizeTool, restoreTool, maximizeTool, closeTool].forEach(function (tool) {
+        [minimizeTool, restoreTool, maximizeTool, closeTool].forEach(tool => {
             tools.appendChild(tool);
         });
 
@@ -185,7 +187,7 @@ define([
             },
             set: function (aValue) {
                 if (formKey !== aValue) {
-                    var formsMap = lookupFormsMap();
+                    const formsMap = lookupFormsMap();
                     if (shell.parentElement)
                         formsMap.delete(formKey);
                     formKey = aValue;
@@ -195,7 +197,7 @@ define([
                 }
             }
         });
-        var defaultCloseOperation = 2;
+        let defaultCloseOperation = 2;
         Object.defineProperty(this, 'defaultCloseOperation', {
             get: function () {
                 return defaultCloseOperation;
@@ -235,16 +237,16 @@ define([
                 }
             }
         });
-        var resizable = true;
-        var minimizable = true;
+        let resizable = true;
+        let minimizable = true;
         var minimized = false;
-        var maximizable = true;
-        var closable = true;
+        let maximizable = true;
+        let closable = true;
         var maximized = false;
-        var undecorated = false;
-        var opacity = 1;
-        var alwaysOnTop = false;
-        var locationByPlatform = true;
+        let undecorated = false;
+        const opacity = 1;
+        let alwaysOnTop = false;
+        let locationByPlatform = true;
 
         function updateToolsVisibility() {
             minimizeTool.style.display = minimizable && !minimized ? '' : 'none';
@@ -306,7 +308,7 @@ define([
             },
             set: function (aValue) {
                 undecorated = !!aValue;
-                [caption, t, l, r, b, tl, tr, bl, br].forEach(function (decor) {
+                [caption, t, l, r, b, tl, tr, bl, br].forEach(decor => {
                     decor.style.display = undecorated ? 'none' : '';
                 });
             }
@@ -342,7 +344,7 @@ define([
                 return shell.offsetLeft;
             },
             set: function (aValue) {
-                shell.style.left = (aValue * 1) + 'px';
+                shell.style.left = `${aValue * 1}px`;
             }
         });
         Object.defineProperty(this, 'top', {
@@ -350,7 +352,7 @@ define([
                 return shell.offsetTop;
             },
             set: function (aValue) {
-                shell.style.top = (aValue * 1) + 'px';
+                shell.style.top = `${aValue * 1}px`;
             }
         });
         Object.defineProperty(this, 'width', {
@@ -358,7 +360,7 @@ define([
                 return shell.offsetWidth;
             },
             set: function (aValue) {
-                content.style.width = (aValue * 1 - (shell.offsetWidth - content.offsetWidth)) + 'px';
+                content.style.width = `${aValue * 1 - (shell.offsetWidth - content.offsetWidth)}px`;
             }
         });
         Object.defineProperty(this, 'height', {
@@ -366,25 +368,27 @@ define([
                 return shell.offsetHeight;
             },
             set: function (aValue) {
-                content.style.height = (aValue * 1 - (shell.offsetHeight - content.offsetHeight)) + 'px';
+                content.style.height = `${aValue * 1 - (shell.offsetHeight - content.offsetHeight)}px`;
             }
         });
 
-        var autoClose = false;
+        let autoClose = false;
+
         function isOutsideOfWindow(anElement) {
-            var currentElement = anElement;
+            let currentElement = anElement;
             while (currentElement !== null && currentElement !== shell && currentElement !== document.body)
                 currentElement = currentElement.parentElement;
             return currentElement === document.body || currentElement === null;
         }
-        var autoCloseMouseDownReg = null;
+        let autoCloseMouseDownReg = null;
+
         function applyAutoClose() {
             if (autoCloseMouseDownReg) {
                 autoCloseMouseDownReg.removeHandler();
                 autoCloseMouseDownReg = null;
             }
             if (autoClose && shell.parentElement) {
-                autoCloseMouseDownReg = Ui.on(document, Ui.Events.MOUSEDOWN, function (evt) {
+                autoCloseMouseDownReg = Ui.on(document, Ui.Events.MOUSEDOWN, evt => {
                     if (isOutsideOfWindow(evt.target)) {
                         evt.stopPropagation();
                         close();
@@ -405,7 +409,8 @@ define([
             }
         });
 
-        var windowOpenedHandlers = new Set();
+        const windowOpenedHandlers = new Set();
+
         function addWindowOpenedHandler(h) {
             windowOpenedHandlers.add(h);
             return {
@@ -422,11 +427,11 @@ define([
         });
 
         function fireWindowOpened() {
-            var formsMap = lookupFormsMap();
+            const formsMap = lookupFormsMap();
             formsMap.set(formKey, self);
-            var event = new WindowEvent(self);
-            windowOpenedHandlers.forEach(function (h) {
-                Invoke.later(function () {
+            const event = new WindowEvent(self);
+            windowOpenedHandlers.forEach(h => {
+                Invoke.later(() => {
                     h(event);
                 });
             });
@@ -434,8 +439,8 @@ define([
             applyAutoClose();
         }
 
-        var onWindowOpened = null;
-        var windowOpenedReg = null;
+        let onWindowOpened = null;
+        let windowOpenedReg = null;
         Object.defineProperty(this, 'onWindowOpened', {
             get: function () {
                 return onWindowOpened;
@@ -452,7 +457,8 @@ define([
             }
         });
 
-        var windowClosingHandlers = new Set();
+        const windowClosingHandlers = new Set();
+
         function addWindowClosingHandler(h) {
             windowClosingHandlers.add(h);
             return {
@@ -469,22 +475,22 @@ define([
         });
 
         function fireWindowClosing() {
-            var canClose = true;
-            var event = new WindowEvent(self);
-            windowClosingHandlers.forEach(function (h) {
+            let canClose = true;
+            const event = new WindowEvent(self);
+            windowClosingHandlers.forEach(h => {
                 if (h(event) === false) {
                     canClose = false;
                 }
             });
             if (canClose) {
-                var formsMap = lookupFormsMap();
+                const formsMap = lookupFormsMap();
                 formsMap.delete(formKey);
             }
             return canClose;
         }
 
-        var onWindowClosing = null;
-        var windowClosingReg = null;
+        let onWindowClosing = null;
+        let windowClosingReg = null;
         Object.defineProperty(this, 'onWindowClosing', {
             get: function () {
                 return onWindowClosing;
@@ -501,7 +507,8 @@ define([
             }
         });
 
-        var windowClosedHandlers = new Set();
+        const windowClosedHandlers = new Set();
+
         function addWindowClosedHandler(h) {
             windowClosedHandlers.add(h);
             return {
@@ -518,9 +525,9 @@ define([
         });
 
         function fireWindowClosed(selectedItem) {
-            var event = new WindowEvent(self);
-            windowClosedHandlers.forEach(function (h) {
-                Invoke.later(function () {
+            const event = new WindowEvent(self);
+            windowClosedHandlers.forEach(h => {
+                Invoke.later(() => {
                     h(event);
                 });
             });
@@ -530,16 +537,16 @@ define([
                 autoCloseMouseDownReg = null;
             }
             if (onSelect) {
-                var _onSelect = onSelect;
+                const _onSelect = onSelect;
                 onSelect = null;
-                Invoke.later(function () {
+                Invoke.later(() => {
                     _onSelect(selectedItem);
                 });
             }
         }
 
-        var onWindowClosed = null;
-        var windowClosedReg = null;
+        let onWindowClosed = null;
+        let windowClosedReg = null;
         Object.defineProperty(this, 'onWindowClosed', {
             get: function () {
                 return onWindowClosed;
@@ -556,7 +563,8 @@ define([
             }
         });
 
-        var windowMinimizedHandlers = new Set();
+        const windowMinimizedHandlers = new Set();
+
         function addWindowMinimizedHandler(h) {
             windowMinimizedHandlers.add(h);
             return {
@@ -573,16 +581,16 @@ define([
         });
 
         function fireWindowMinimized() {
-            var event = new WindowEvent(self);
-            windowMinimizedHandlers.forEach(function (h) {
-                Invoke.later(function () {
+            const event = new WindowEvent(self);
+            windowMinimizedHandlers.forEach(h => {
+                Invoke.later(() => {
                     h(event);
                 });
             });
         }
 
-        var onWindowMinimized = null;
-        var windowMinimizedReg = null;
+        let onWindowMinimized = null;
+        let windowMinimizedReg = null;
         Object.defineProperty(this, 'onWindowMinimized', {
             get: function () {
                 return onWindowMinimized;
@@ -599,7 +607,8 @@ define([
             }
         });
 
-        var windowRestoredHandlers = new Set();
+        const windowRestoredHandlers = new Set();
+
         function addWindowRestoredHandler(h) {
             windowRestoredHandlers.add(h);
             return {
@@ -616,16 +625,16 @@ define([
         });
 
         function fireWindowRestored() {
-            var event = new WindowEvent(self);
-            windowRestoredHandlers.forEach(function (h) {
-                Invoke.later(function () {
+            const event = new WindowEvent(self);
+            windowRestoredHandlers.forEach(h => {
+                Invoke.later(() => {
                     h(event);
                 });
             });
         }
 
-        var onWindowRestored = null;
-        var windowRestoredReg = null;
+        let onWindowRestored = null;
+        let windowRestoredReg = null;
         Object.defineProperty(this, 'onWindowRestored', {
             get: function () {
                 return onWindowRestored;
@@ -642,7 +651,8 @@ define([
             }
         });
 
-        var windowMaximizedHandlers = new Set();
+        const windowMaximizedHandlers = new Set();
+
         function addWindowMaximizedHandler(h) {
             windowMaximizedHandlers.add(h);
             return {
@@ -659,16 +669,16 @@ define([
         });
 
         function fireWindowMaximized() {
-            var event = new WindowEvent(self);
-            windowMaximizedHandlers.forEach(function (h) {
-                Invoke.later(function () {
+            const event = new WindowEvent(self);
+            windowMaximizedHandlers.forEach(h => {
+                Invoke.later(() => {
                     h(event);
                 });
             });
         }
 
-        var onWindowMaximized = null;
-        var windowMaximizedReg = null;
+        let onWindowMaximized = null;
+        let windowMaximizedReg = null;
         Object.defineProperty(this, 'onWindowMaximized', {
             get: function () {
                 return onWindowMaximized;
@@ -685,7 +695,8 @@ define([
             }
         });
 
-        var windowActivatedHandlers = new Set();
+        const windowActivatedHandlers = new Set();
+
         function addWindowActivatedHandler(h) {
             windowActivatedHandlers.add(h);
             return {
@@ -702,16 +713,16 @@ define([
         });
 
         function fireWindowActivated() {
-            var event = new WindowEvent(self);
-            windowActivatedHandlers.forEach(function (h) {
-                Invoke.later(function () {
+            const event = new WindowEvent(self);
+            windowActivatedHandlers.forEach(h => {
+                Invoke.later(() => {
                     h(event);
                 });
             });
         }
 
-        var onWindowActivated = null;
-        var windowActivatedReg = null;
+        let onWindowActivated = null;
+        let windowActivatedReg = null;
         Object.defineProperty(this, 'onWindowActivated', {
             get: function () {
                 return onWindowActivated;
@@ -728,7 +739,8 @@ define([
             }
         });
 
-        var windowDeactivatedHandlers = new Set();
+        const windowDeactivatedHandlers = new Set();
+
         function addWindowDeactivatedHandler(h) {
             windowDeactivatedHandlers.add(h);
             return {
@@ -745,16 +757,16 @@ define([
         });
 
         function fireWindowDeactivated() {
-            var event = new WindowEvent(self);
-            windowDeactivatedHandlers.forEach(function (h) {
-                Invoke.later(function () {
+            const event = new WindowEvent(self);
+            windowDeactivatedHandlers.forEach(h => {
+                Invoke.later(() => {
                     h(event);
                 });
             });
         }
 
-        var onWindowDeactivated = null;
-        var windowDeactivatedReg = null;
+        let onWindowDeactivated = null;
+        let windowDeactivatedReg = null;
         Object.defineProperty(this, 'onWindowDeactivated', {
             get: function () {
                 return onWindowDeactivated;
@@ -772,21 +784,19 @@ define([
         });
 
         function lookupFormsMap() {
-            return shell.parentElement.className.indexOf('p-widget') !== -1 &&
-                    shell.parentElement.className.indexOf('p-container') !== -1 ?
+            return shell.parentElement.className.includes('p-widget') &&
+                    shell.parentElement.className.includes('p-container') ?
                     shell.parentElement['p-widget'].shownForms :
                     shownForms;
         }
 
         function activate() {
             if (shell.parentElement) {
-                var formsMap = lookupFormsMap();
-                if (shell.className.indexOf('p-window-active') === -1) {
+                const formsMap = lookupFormsMap();
+                if (!shell.className.includes('p-window-active')) {
                     Array.from(formsMap.values())
-                            .filter(function (aWindow) {
-                                return aWindow !== self;
-                            })
-                            .forEach(function (aWindow) {
+                            .filter(aWindow => aWindow !== self)
+                            .forEach(aWindow => {
                                 aWindow.deactivate();
                             });
                     shell.classList.add('p-window-active');
@@ -801,7 +811,7 @@ define([
         });
 
         function deactivate() {
-            if (shell.className.indexOf('p-window-active') > -1) {
+            if (shell.className.includes('p-window-active')) {
                 shell.classList.remove('p-window-active');
                 fireWindowDeactivated();
             }
@@ -817,10 +827,10 @@ define([
                 document.body.appendChild(shell);
                 if (locationByPlatform) {
                     if (!shell.style.left) {
-                        shell.style.left = platformLocation.x + 'px';
+                        shell.style.left = `${platformLocation.x}px`;
                     }
                     if (!shell.style.top) {
-                        shell.style.top = platformLocation.y + 'px';
+                        shell.style.top = `${platformLocation.y}px`;
                     }
                     platformLocation.x += DEFAULT_WINDOWS_SPACING_X;
                     if (platformLocation.x + shell.offsetWidth > window.innerWidth)
@@ -830,10 +840,10 @@ define([
                         platformLocation.y = 0;
                 } else {
                     if (!shell.style.left) {
-                        shell.style.left = ((window.innerWidth - shell.offsetWidth) / 2) + 'px';
+                        shell.style.left = `${(window.innerWidth - shell.offsetWidth) / 2}px`;
                     }
                     if (!shell.style.top) {
-                        shell.style.top = ((window.innerHeight - shell.offsetHeight) / 2) + 'px';
+                        shell.style.top = `${(window.innerHeight - shell.offsetHeight) / 2}px`;
                     }
                 }
                 fireWindowOpened();
@@ -846,9 +856,10 @@ define([
             }
         });
 
-        var modelMask = document.createElement('div');
+        const modelMask = document.createElement('div');
         modelMask.className = 'p-window-modal-mask';
         var onSelect = null;
+
         function showModal(aOnSelect) {
             if (!shell.parentElement) {
                 onSelect = aOnSelect;
@@ -867,10 +878,10 @@ define([
                 aDesktop.element.appendChild(shell);
                 if (locationByPlatform) {
                     if (!shell.style.left) {
-                        shell.style.left = aDesktop.platformLocationLeft + 'px';
+                        shell.style.left = `${aDesktop.platformLocationLeft}px`;
                     }
                     if (!shell.style.top) {
-                        shell.style.top = aDesktop.platformLocationTop + 'px';
+                        shell.style.top = `${aDesktop.platformLocationTop}px`;
                     }
                     aDesktop.platformLocationLeft += DEFAULT_WINDOWS_SPACING_X;
                     if (aDesktop.platformLocationLeft + shell.offsetWidth > aDesktop.element.clientWidth)
@@ -880,10 +891,10 @@ define([
                         aDesktop.platformLocationTop = 0;
                 } else {
                     if (!shell.style.left) {
-                        shell.style.left = ((aDesktop.element.offsetWidth - shell.offsetWidth) / 2) + 'px';
+                        shell.style.left = `${(aDesktop.element.offsetWidth - shell.offsetWidth) / 2}px`;
                     }
                     if (!shell.style.top) {
-                        shell.style.top = ((aDesktop.element.offsetHeight - shell.offsetHeight) / 2) + 'px';
+                        shell.style.top = `${(aDesktop.element.offsetHeight - shell.offsetHeight) / 2}px`;
                     }
                 }
                 fireWindowOpened();
@@ -917,13 +928,24 @@ define([
             }
         });
 
-        var sizePositionSnapshot = {left: 0, top: 0, width: 0, height: 0};
+        let sizePositionSnapshot = {
+            left: 0,
+            top: 0,
+            width: 0,
+            height: 0
+        };
 
         function minimize() {
             if (!minimized) {
                 if (maximized)
                     restore();
-                sizePositionSnapshot = {left: self.left, top: self.top, width: self.width, height: self.height, maximized: maximized};
+                sizePositionSnapshot = {
+                    left: self.left,
+                    top: self.top,
+                    width: self.width,
+                    height: self.height,
+                    maximized
+                };
                 minimized = true;
                 content.style.height = '0px';
                 fireWindowMinimized();
@@ -939,7 +961,13 @@ define([
         function maximize() {
             if (shell.parentElement) {
                 if (!maximized && !minimized) {
-                    sizePositionSnapshot = {left: self.left, top: self.top, width: self.width, height: self.height, maximized: maximized};
+                    sizePositionSnapshot = {
+                        left: self.left,
+                        top: self.top,
+                        width: self.width,
+                        height: self.height,
+                        maximized
+                    };
                     maximized = true;
                     self.left = self.top = 0;
                     if (shell.parentElement === document.body) {
@@ -980,7 +1008,7 @@ define([
 
         function toFront() {
             if (shell.parentElement) {
-                var targetParent = shell.parentElement;
+                const targetParent = shell.parentElement;
                 targetParent.removeChild(shell);
                 targetParent.appendChild(shell);
                 activate();
@@ -992,61 +1020,62 @@ define([
             }
         });
     }
+}
 
-    Object.defineProperty(WindowPane, 'shown', {
-        get: function () {
-            return getShownForms;
-        }
-    });
-
-    Object.defineProperty(WindowPane, 'getShownForm', {
-        get: function () {
-            return getShownForm;
-        }
-    });
-
-    var shownChangeHandlers = new Set();
-    function addShownChangeHandler(h) {
-        shownChangeHandlers.add(h);
-        return {
-            removeHandler: function () {
-                shownChangeHandlers.delete(h);
-            }
-        };
+Object.defineProperty(WindowPane, 'shown', {
+    get: function () {
+        return getShownForms;
     }
-
-    Object.defineProperty(this, 'addShownChangeHandler', {
-        get: function () {
-            return addShownChangeHandler;
-        }
-    });
-
-    function fireShownChange() {
-        var event = new WindowEvent(shownForms);
-        shownChangeHandlers.forEach(function (h) {
-            Invoke.later(function () {
-                h(event);
-            });
-        });
-    }
-
-    var onShownChange = null;
-    var shownChangeReg = null;
-    Object.defineProperty(this, 'onChange', {
-        get: function () {
-            return onShownChange;
-        },
-        set: function (aValue) {
-            if (shownChangeReg) {
-                shownChangeReg.removeHandler();
-                shownChangeReg = null;
-            }
-            onShownChange = aValue;
-            if (onShownChange) {
-                shownChangeReg = addShownChangeHandler(onShownChange);
-            }
-        }
-    });
-
-    return WindowPane;
 });
+
+Object.defineProperty(WindowPane, 'getShownForm', {
+    get: function () {
+        return getShownForm;
+    }
+});
+
+const shownChangeHandlers = new Set();
+
+function addShownChangeHandler(h) {
+    shownChangeHandlers.add(h);
+    return {
+        removeHandler: function () {
+            shownChangeHandlers.delete(h);
+        }
+    };
+}
+
+Object.defineProperty(WindowPane, 'addShownChangeHandler', {
+    get: function () {
+        return addShownChangeHandler;
+    }
+});
+
+function fireShownChange() {
+    const event = new WindowEvent(shownForms);
+    shownChangeHandlers.forEach(h => {
+        Invoke.later(() => {
+            h(event);
+        });
+    });
+}
+
+let onShownChange = null;
+let shownChangeReg = null;
+Object.defineProperty(WindowPane, 'onChange', {
+    get: function () {
+        return onShownChange;
+    },
+    set: function (aValue) {
+        if (shownChangeReg) {
+            shownChangeReg.removeHandler();
+            shownChangeReg = null;
+        }
+        onShownChange = aValue;
+        if (onShownChange) {
+            shownChangeReg = addShownChangeHandler(onShownChange);
+        }
+    }
+});
+
+export default WindowPane;
