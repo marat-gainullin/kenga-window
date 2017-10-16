@@ -33,7 +33,9 @@ const paths = {
 
 const masks = {
     scripts: '**/*.js',
-    styles: '**/*.css'
+    styles: '**/*.css',
+    gifs: '**/*.gif',
+    pngs: '**/*.png'
 };
 
 // Delete the build directory
@@ -48,16 +50,16 @@ gulp.task('lint', () => {
 });
 
 // Process scripts
-gulp.task('transpile', ['clean'], () => gulp.src(masks.scripts, {cwd: paths.src})
+gulp.task('babel', ['clean'], () => gulp.src(masks.scripts, {cwd: paths.src})
             .pipe(babel({
                 presets: ['env']
             }))
             .pipe(gulp.dest(paths.lib)));
 
-gulp.task('js', ['lint', 'transpile'], () => {
+gulp.task('code', ['lint', 'babel'], () => {
 });
-// Process styles
-gulp.task('styles', ['clean'], () => gulp.src(masks.styles, {cwd: paths.src})
+// Process styles, gif images, etc
+gulp.task('assets', ['clean'], () => gulp.src([masks.styles, masks.gifs, masks.pngs], {cwd: paths.src})
             .pipe(gulp.dest(paths.lib)));
 
 function indexFrom(base) {
@@ -121,11 +123,11 @@ gulp.task('package', ['index'], () => gulp.src([
         'LICENSE', 'package.json'], {cwd: paths.project})
             .pipe(filterPackageJson(pkg))
             .pipe(gulp.dest(paths.lib)));
-gulp.task('build', ['js', 'styles', 'package'], () => {
+gulp.task('build', ['code', 'assets', 'package'], () => {
 });
 
 gulp.task('bundle-src', ['clean'], () => {
-    return gulp.src([masks.scripts, masks.styles], {cwd: paths.src})
+    return gulp.src([masks.scripts, masks.styles, masks.gifs, masks.pngs], {cwd: paths.src})
             .pipe(gulp.dest(`${paths.bundle}src`));
 });
 gulp.task('bundle-index', ['clean'], () => {

@@ -6,7 +6,7 @@
   "repository": "https://github.com/marat-gainullin/kenga-window.git",
   "author": "marat-gainullin <mg@altsoft.biz>",
   "license": "BSD-3-Clause",
-  "private": false
+  "private": false,
   "scripts": {
     "test": "karma start karma.conf.js"
   },
@@ -22,7 +22,6 @@
     "gulp": "^3.9.1",
     "gulp-babel": "^7.0.0",
     "gulp-clean": "^0.3.2",
-    "gulp-clean-css": "^3.9.0",
     "gulp-concat": "^2.6.1",
     "gulp-if": "^2.0.2",
     "gulp-jshint": "^2.0.4",
