@@ -1,8 +1,8 @@
-import Event from '../event';
-import extend from 'core/extend';
+import Event from 'kenga/event';
 
-function WindowEvent(w) {
-    Event.call(this, w, w);
+class WindowEvent extends Event {
+    constructor(w) {
+        super(w, w);
+    }
 }
-extend(WindowEvent, Event);
 export default WindowEvent;

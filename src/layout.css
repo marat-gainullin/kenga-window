@@ -1,3 +1,5 @@
+@import 'node_modules/kenga/layout.css';
+
 .p-window-shell {
     display: inline-block;
     position: absolute;

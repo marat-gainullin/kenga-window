@@ -1,6 +1,6 @@
-import Ui from 'ui/utils';
-import Invoke from 'core/invoke';
-import Id from 'core/id';
+import Id from 'septima-utils/id';
+import Invoke from 'septima-utils/invoke';
+import Ui from 'kenga/utils';
 import WindowEvent from './events/window-event';
 
 const DEFAULT_WINDOWS_SPACING_X = 25;
