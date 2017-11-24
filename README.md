@@ -1,5 +1,5 @@
-# kenga-window
-Kenga popup window
+# Kenga windows
+Kenga popup windows
 
 ## Install
 To install `kenga-window` package to your project, type the following command:
