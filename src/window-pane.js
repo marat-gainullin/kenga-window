@@ -22,7 +22,7 @@ function getShownForm(aFormKey) {
 class WindowPane {
     constructor(aView, formKey) {
         if (arguments.length < 2)
-            formKey = Id.generate();
+            formKey = Id.next();
         let content;
         if (arguments.length < 1) {
             content = document.createElement('div');
