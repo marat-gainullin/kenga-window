@@ -3,12 +3,15 @@
 .p-window-tl {
     cursor: nw-resize;
 }
+
 .p-window-tr {
     cursor: ne-resize;
 }
+
 .p-window-bl {
     cursor: sw-resize;
 }
+
 .p-window-br {
     cursor: se-resize;
 }
@@ -16,18 +19,32 @@
 .p-window-t {
     cursor: ns-resize;
 }
+
 .p-window-b {
     cursor: ns-resize;
 }
+
 .p-window-l {
     cursor: ew-resize;
 }
+
 .p-window-r {
     cursor: ew-resize;
 }
-.p-window-t,.p-window-b,.p-window-l,.p-window-r {
-    /* background-color: bisque; */
+
+.p-window-t, .p-window-b, .p-window-l, .p-window-r {
 }
-.p-window-tl,.p-window-tr,.p-window-bl,.p-window-br {
-    /* background-color: blueviolet; */
+
+.p-window-tl, .p-window-tr, .p-window-bl, .p-window-br {
 }
+
+.p-window-modal-mask {
+    background-color: rgba(150, 150, 150, 0.7);
+}
+
+.p-window-shell {
+    -webkit-box-shadow: -4px 2px 10px 0px rgba(150, 150, 150, 1);
+    -moz-box-shadow: -4px 2px 10px 0px rgba(150, 150, 150, 1);
+    box-shadow: -4px 2px 10px 0px rgba(150, 150, 150, 1);
+}
+

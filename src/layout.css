@@ -14,7 +14,6 @@
     white-space: nowrap;
     position: relative;
     line-height: normal;
-    background-color: blueviolet;
 }
 
 .p-window-tools {
@@ -134,5 +133,4 @@
     top: 0px;
     width: 100%;
     height: 100%;
-    background-color: lightgray;
 }

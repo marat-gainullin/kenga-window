@@ -237,6 +237,11 @@ class WindowPane {
                 }
             }
         });
+        Object.defineProperty(this, 'element', {
+            get: function () {
+                return shell;
+            }
+        });
         let resizable = true;
         let minimizable = true;
         var minimized = false;
