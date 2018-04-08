@@ -19,6 +19,7 @@ function getShownForms() {
 function getShownForm(aFormKey) {
     return shownForms.get(aFormKey);
 }
+
 class WindowPane {
     constructor(aView, formKey) {
         if (arguments.length < 2)
@@ -59,6 +60,7 @@ class WindowPane {
                 }, true);
             });
         }
+
         decorationOnMove(caption, (snapshot, event) => {
             const movePageX = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
             const movePageY = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
@@ -113,6 +115,7 @@ class WindowPane {
             newHeight = newHeight >= 0 ? newHeight : 0;
             content.style.height = `${newHeight}px`;
         }
+
         const t = document.createElement('div');
         t.className = 'p-window-t';
         decorationOnMove(t, moveTop);
@@ -259,6 +262,7 @@ class WindowPane {
             restoreTool.style.display = minimized || maximized ? '' : 'none';
             closeTool.style.display = closable ? '' : 'none';
         }
+
         updateToolsVisibility();
 
         Object.defineProperty(this, 'resizable', {
@@ -385,20 +389,28 @@ class WindowPane {
                 currentElement = currentElement.parentElement;
             return currentElement === document.body || currentElement === null;
         }
+
         let autoCloseMouseDownReg = null;
+        let autoCloseTouchStartReg = null;
 
         function applyAutoClose() {
             if (autoCloseMouseDownReg) {
                 autoCloseMouseDownReg.removeHandler();
                 autoCloseMouseDownReg = null;
             }
+            if (autoCloseTouchStartReg) {
+                autoCloseTouchStartReg.removeHandler();
+                autoCloseTouchStartReg = null;
+            }
+            const autoCloser = evt => {
+                if (isOutsideOfWindow(evt.target)) {
+                    evt.stopPropagation();
+                    close();
+                }
+            };
             if (autoClose && shell.parentElement) {
-                autoCloseMouseDownReg = Ui.on(document, Ui.Events.MOUSEDOWN, evt => {
-                    if (isOutsideOfWindow(evt.target)) {
-                        evt.stopPropagation();
-                        close();
-                    }
-                }, true);
+                autoCloseMouseDownReg = Ui.on(document, Ui.Events.MOUSEDOWN, autoCloser, true);
+                autoCloseTouchStartReg = Ui.on(document, Ui.Events.TOUCHSTART, autoCloser, true);
             }
         }
 
@@ -790,9 +802,9 @@ class WindowPane {
 
         function lookupFormsMap() {
             return shell.parentElement.className.includes('p-widget') &&
-                    shell.parentElement.className.includes('p-container') ?
-                    shell.parentElement['p-widget'].shownForms :
-                    shownForms;
+            shell.parentElement.className.includes('p-container') ?
+                shell.parentElement['p-widget'].shownForms :
+                shownForms;
         }
 
         function activate() {
@@ -800,15 +812,16 @@ class WindowPane {
                 const formsMap = lookupFormsMap();
                 if (!shell.className.includes('p-window-active')) {
                     Array.from(formsMap.values())
-                            .filter(aWindow => aWindow !== self)
-                            .forEach(aWindow => {
-                                aWindow.deactivate();
-                            });
+                        .filter(aWindow => aWindow !== self)
+                        .forEach(aWindow => {
+                            aWindow.deactivate();
+                        });
                     shell.classList.add('p-window-active');
                     fireWindowActivated();
                 }
             }
         }
+
         Object.defineProperty(this, 'activate', {
             get: function () {
                 return activate;
@@ -821,6 +834,7 @@ class WindowPane {
                 fireWindowDeactivated();
             }
         }
+
         Object.defineProperty(this, 'deactivate', {
             get: function () {
                 return deactivate;
@@ -855,6 +869,7 @@ class WindowPane {
                 activate();
             }
         }
+
         Object.defineProperty(this, 'show', {
             get: function () {
                 return show;
@@ -872,6 +887,7 @@ class WindowPane {
                 show();
             }
         }
+
         Object.defineProperty(this, 'showModal', {
             get: function () {
                 return showModal;
@@ -906,6 +922,7 @@ class WindowPane {
                 activate();
             }
         }
+
         Object.defineProperty(this, 'showInternalFrame', {
             get: function () {
                 return showInternalFrame;
@@ -927,6 +944,7 @@ class WindowPane {
                 }
             }
         }
+
         Object.defineProperty(this, 'close', {
             get: function () {
                 return close;
@@ -957,6 +975,7 @@ class WindowPane {
                 updateToolsVisibility();
             }
         }
+
         Object.defineProperty(this, 'minimize', {
             get: function () {
                 return minimize;
@@ -987,6 +1006,7 @@ class WindowPane {
                 }
             }
         }
+
         Object.defineProperty(this, 'maximize', {
             get: function () {
                 return maximize;
@@ -1005,6 +1025,7 @@ class WindowPane {
                 updateToolsVisibility();
             }
         }
+
         Object.defineProperty(this, 'restore', {
             get: function () {
                 return restore;
@@ -1019,6 +1040,7 @@ class WindowPane {
                 activate();
             }
         }
+
         Object.defineProperty(this, 'toFront', {
             get: function () {
                 return toFront;
