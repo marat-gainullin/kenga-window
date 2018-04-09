@@ -402,15 +402,18 @@ class WindowPane {
                 autoCloseTouchStartReg.removeHandler();
                 autoCloseTouchStartReg = null;
             }
-            const autoCloser = evt => {
-                if (isOutsideOfWindow(evt.target)) {
-                    evt.stopPropagation();
-                    close();
-                }
-            };
             if (autoClose && shell.parentElement) {
-                autoCloseMouseDownReg = Ui.on(document, Ui.Events.MOUSEDOWN, autoCloser, true);
-                autoCloseTouchStartReg = Ui.on(document, Ui.Events.TOUCHSTART, autoCloser, true);
+                autoCloseMouseDownReg = Ui.on(document, Ui.Events.MOUSEDOWN, evt => {
+                    if (isOutsideOfWindow(evt.target)) {
+                        evt.stopPropagation();
+                        close();
+                    }
+                }, true);
+                autoCloseTouchStartReg = Ui.on(document, Ui.Events.TOUCHSTART, evt => {
+                    if (isOutsideOfWindow(evt.target)) {
+                        close();
+                    }
+                }, true);
             }
         }
 
