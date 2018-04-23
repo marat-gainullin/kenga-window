@@ -383,11 +383,13 @@ class WindowPane {
 
         let autoClose = false;
 
-        function isOutsideOfWindow(anElement) {
-            let currentElement = anElement;
-            while (currentElement !== null && currentElement !== shell && currentElement !== document.body)
-                currentElement = currentElement.parentElement;
-            return currentElement === document.body || currentElement === null;
+        function isOutsideOfWindow(event) {
+            const absLeft = Ui.absoluteLeft(shell);
+            const absTop = Ui.absoluteTop(shell);
+            const pageX = 'pageX' in event ? event.pageX : event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+            const pageY = 'pageY' in event ? event.pageY : event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+            return pageX < absLeft || pageX > absLeft + shell.offsetWidth ||
+                pageY < absTop || pageY > absTop + shell.offsetHeight;
         }
 
         let autoCloseMouseDownReg = null;
@@ -404,13 +406,12 @@ class WindowPane {
             }
             if (autoClose && shell.parentElement) {
                 autoCloseMouseDownReg = Ui.on(document, Ui.Events.MOUSEDOWN, evt => {
-                    if (isOutsideOfWindow(evt.target)) {
-                        evt.stopPropagation();
+                    if (isOutsideOfWindow(evt)) {
                         close();
                     }
                 }, true);
                 autoCloseTouchStartReg = Ui.on(document, Ui.Events.TOUCHSTART, evt => {
-                    if (isOutsideOfWindow(evt.target)) {
+                    if (isOutsideOfWindow(evt)) {
                         close();
                     }
                 }, true);
