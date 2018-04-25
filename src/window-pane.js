@@ -245,6 +245,11 @@ class WindowPane {
                 return shell;
             }
         });
+        Object.defineProperty(this, 'modalMask', {
+            get: function () {
+                return modalMask;
+            }
+        });
         let resizable = true;
         let minimizable = true;
         var minimized = false;
@@ -255,6 +260,7 @@ class WindowPane {
         const opacity = 1;
         let alwaysOnTop = false;
         let locationByPlatform = true;
+        let showAtCenter = true;
 
         function updateToolsVisibility() {
             minimizeTool.style.display = minimizable && !minimized ? '' : 'none';
@@ -346,6 +352,14 @@ class WindowPane {
             },
             set: function (aValue) {
                 locationByPlatform = !!aValue;
+            }
+        });
+        Object.defineProperty(this, 'showAtCenter', {
+            get: function () {
+                return showAtCenter;
+            },
+            set: function (aValue) {
+                showAtCenter = !!aValue;
             }
         });
         Object.defineProperty(this, 'left', {
@@ -861,7 +875,7 @@ class WindowPane {
                     platformLocation.y += DEFAULT_WINDOWS_SPACING_Y;
                     if (platformLocation.y + shell.offsetHeight > window.innerHeight)
                         platformLocation.y = 0;
-                } else {
+                } else if (showAtCenter) {
                     if (!shell.style.left) {
                         shell.style.left = `${(window.innerWidth - shell.offsetWidth) / 2}px`;
                     }
@@ -880,14 +894,14 @@ class WindowPane {
             }
         });
 
-        const modelMask = document.createElement('div');
-        modelMask.className = 'p-window-modal-mask';
+        const modalMask = document.createElement('div');
+        modalMask.className = 'p-window-modal-mask';
         var onSelect = null;
 
         function showModal(aOnSelect) {
             if (!shell.parentElement) {
                 onSelect = aOnSelect;
-                document.body.appendChild(modelMask);
+                document.body.appendChild(modalMask);
                 show();
             }
         }
@@ -914,7 +928,7 @@ class WindowPane {
                     aDesktop.platformLocationTop += DEFAULT_WINDOWS_SPACING_Y;
                     if (aDesktop.platformLocationTop + shell.offsetHeight > aDesktop.element.clientHeight)
                         aDesktop.platformLocationTop = 0;
-                } else {
+                } else if (showAtCenter) {
                     if (!shell.style.left) {
                         shell.style.left = `${(aDesktop.element.offsetWidth - shell.offsetWidth) / 2}px`;
                     }
@@ -934,8 +948,8 @@ class WindowPane {
         });
 
         function hide() {
-            if (modelMask.parentElement)
-                modelMask.parentElement.removeChild(modelMask);
+            if (modalMask.parentElement)
+                modalMask.parentElement.removeChild(modalMask);
             if (shell.parentElement)
                 shell.parentElement.removeChild(shell);
         }
