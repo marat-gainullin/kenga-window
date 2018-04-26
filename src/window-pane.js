@@ -571,6 +571,10 @@ class WindowPane {
                 autoCloseMouseDownReg.removeHandler();
                 autoCloseMouseDownReg = null;
             }
+            if (autoCloseTouchStartReg) {
+                autoCloseTouchStartReg.removeHandler();
+                autoCloseTouchStartReg = null;
+            }
             if (onSelect) {
                 const _onSelect = onSelect;
                 onSelect = null;
