@@ -35,15 +35,15 @@
     "karma-coverage": "^1.1.1",
     "karma-jasmine": "^1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
-    "kenga-containers": "0.0.23",
-    "septima-remote": "0.0.18",
+    "kenga-containers": "0.0.24",
+    "septima-remote": "0.0.19",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.9.0",
     "yargs": "^9.0.1"
   },
   "dependencies": {
-    "kenga": "0.0.32",
+    "kenga": "0.0.36",
     "septima-utils": "0.0.5"
   }
 }
