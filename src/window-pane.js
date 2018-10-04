@@ -420,7 +420,7 @@ class WindowPane {
             }
             if (autoClose && shell.parentElement) {
                 autoCloseMouseDownReg = Ui.on(document, Ui.Events.MOUSEDOWN, evt => {
-                    if (isOutsideOfWindow(evt)) {
+                    if (isOutsideOfWindow(evt) && evt.clientX < document.documentElement.offsetWidth /* click on scrollber shouldn't lead to closing of a window */) {
                         close();
                     }
                 }, true);
