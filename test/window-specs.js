@@ -80,7 +80,7 @@ describe('Window Api', () => {
         instance.left = 400;
         instance.top = 150;
         instance.width = instance.height = 200;
-        Resource.Icon.load('base/assets/binary-content.png')
+        Resource.Icon.load('../assets/binary-content.png')
                 .then(loaded => {
                     instance.icon = loaded;
                 })
@@ -109,7 +109,7 @@ describe('Window Api', () => {
         instance.left = 400;
         instance.top = 150;
         instance.width = instance.height = 200;
-        Resource.Icon.load('base/assets/binary-content.png')
+        Resource.Icon.load('../assets/binary-content.png')
                 .then(loaded => {
                     instance.icon = loaded;
                     instance.maximize();
