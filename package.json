@@ -11,8 +11,7 @@
     "lib": "rollup -c rollup.lib.config.js"
   },
   "dependencies": {
-    "kenga": "0.0.44",
-    "septima-utils": "0.0.9"
+    "kenga": "0.0.44"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.8",

@@ -1,5 +1,3 @@
-import Id from 'septima-utils/id';
-import Invoke from 'septima-utils/invoke';
 import Ui from 'kenga/utils';
 import WindowEvent from './events/window-event';
 
@@ -23,7 +21,7 @@ function getShownForm(aFormKey) {
 class WindowPane {
     constructor(aView, formKey) {
         if (arguments.length < 2)
-            formKey = Id.next();
+            formKey = Ui.next();
         let content;
         if (arguments.length < 1) {
             content = document.createElement('div');
@@ -466,7 +464,7 @@ class WindowPane {
             formsMap.set(formKey, self);
             const event = new WindowEvent(self);
             windowOpenedHandlers.forEach(h => {
-                Invoke.later(() => {
+                Ui.later(() => {
                     h(event);
                 });
             });
@@ -562,7 +560,7 @@ class WindowPane {
         function fireWindowClosed(selectedItem) {
             const event = new WindowEvent(self);
             windowClosedHandlers.forEach(h => {
-                Invoke.later(() => {
+                Ui.later(() => {
                     h(event);
                 });
             });
@@ -578,7 +576,7 @@ class WindowPane {
             if (onSelect) {
                 const _onSelect = onSelect;
                 onSelect = null;
-                Invoke.later(() => {
+                Ui.later(() => {
                     _onSelect(selectedItem);
                 });
             }
@@ -622,7 +620,7 @@ class WindowPane {
         function fireWindowMinimized() {
             const event = new WindowEvent(self);
             windowMinimizedHandlers.forEach(h => {
-                Invoke.later(() => {
+                Ui.later(() => {
                     h(event);
                 });
             });
@@ -666,7 +664,7 @@ class WindowPane {
         function fireWindowRestored() {
             const event = new WindowEvent(self);
             windowRestoredHandlers.forEach(h => {
-                Invoke.later(() => {
+                Ui.later(() => {
                     h(event);
                 });
             });
@@ -710,7 +708,7 @@ class WindowPane {
         function fireWindowMaximized() {
             const event = new WindowEvent(self);
             windowMaximizedHandlers.forEach(h => {
-                Invoke.later(() => {
+                Ui.later(() => {
                     h(event);
                 });
             });
@@ -754,7 +752,7 @@ class WindowPane {
         function fireWindowActivated() {
             const event = new WindowEvent(self);
             windowActivatedHandlers.forEach(h => {
-                Invoke.later(() => {
+                Ui.later(() => {
                     h(event);
                 });
             });
@@ -798,7 +796,7 @@ class WindowPane {
         function fireWindowDeactivated() {
             const event = new WindowEvent(self);
             windowDeactivatedHandlers.forEach(h => {
-                Invoke.later(() => {
+                Ui.later(() => {
                     h(event);
                 });
             });
@@ -1103,7 +1101,7 @@ Object.defineProperty(WindowPane, 'addShownChangeHandler', {
 function fireShownChange() {
     const event = new WindowEvent(shownForms);
     shownChangeHandlers.forEach(h => {
-        Invoke.later(() => {
+        Ui.later(() => {
             h(event);
         });
     });
