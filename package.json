@@ -1,6 +1,6 @@
 {
   "name": "kenga-window",
-  "version": "0.0.28",
+  "version": "0.0.29",
   "description": "Kenga popup window.",
   "repository": "https://github.com/marat-gainullin/kenga-window.git",
   "author": "marat-gainullin <mg@altsoft.biz>",
@@ -11,7 +11,7 @@
     "lib": "rollup -c rollup.lib.config.js"
   },
   "dependencies": {
-    "kenga": "0.0.44"
+    "kenga": "0.0.45"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.8",
