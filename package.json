@@ -29,6 +29,6 @@
     "rollup-plugin-styles": "^3.14.1",
     "shelljs": "^0.8.4",
     "septima-model": "0.0.25",
-    "kenga-containers": "^0.0.43"
+    "kenga-containers": "^0.0.44"
   }
 }
