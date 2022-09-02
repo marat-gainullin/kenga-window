@@ -73,10 +73,12 @@ class WindowPane {
         text.className = 'p-window-text';
         caption.appendChild(text);
         Ui.on(caption, Ui.Events.DBLCLICK, () => {
-            if (maximized) {
-                restore();
-            } else if (!minimized) {
-                maximize();
+            if (maximizable) {
+                if (maximized) {
+                    restore();
+                } else if (!minimized) {
+                    maximize();
+                }
             }
         });
 
