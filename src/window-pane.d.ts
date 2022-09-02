@@ -2,7 +2,7 @@ import Widget from 'kenga/widget';
 import WindowEvent from './events/window-event';
 
 export default class WindowPane {
-  constructor(aView: Widget, formKey: any);
+  constructor(aView: Widget, formKey?: any);
 
   formKey: any;
   defaultCloseOperation: number;
@@ -12,8 +12,11 @@ export default class WindowPane {
   modalMask: HTMLElement;
   resizable: boolean;
   minimizable: boolean;
+  minimizeTool: HTMLElement
   maximizable: boolean;
+  maximizeTool: HTMLElement
   closable: boolean;
+  closeTool: HTMLElement
   minimized: boolean;
   maximized: boolean;
   undecorated: boolean;

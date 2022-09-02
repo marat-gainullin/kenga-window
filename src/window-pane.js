@@ -257,7 +257,7 @@ class WindowPane {
         let undecorated = false;
         const opacity = 1;
         let alwaysOnTop = false;
-        let locationByPlatform = true;
+        let locationByPlatform = false;
         let showAtCenter = true;
 
         function updateToolsVisibility() {
@@ -296,6 +296,11 @@ class WindowPane {
                 updateToolsVisibility();
             }
         });
+        Object.defineProperty(this, 'maximizeTool', {
+            get: function () {
+                return minimizeTool;
+            }
+        });
         Object.defineProperty(this, 'closable', {
             get: function () {
                 return closable;
@@ -305,9 +310,19 @@ class WindowPane {
                 updateToolsVisibility();
             }
         });
+        Object.defineProperty(this, 'closeTool', {
+            get: function () {
+                return closeTool;
+            }
+        });
         Object.defineProperty(this, 'minimized', {
             get: function () {
                 return minimized;
+            }
+        });
+        Object.defineProperty(this, 'minimizeTool', {
+            get: function () {
+                return minimizeTool;
             }
         });
         Object.defineProperty(this, 'maximized', {
@@ -1049,6 +1064,12 @@ class WindowPane {
         Object.defineProperty(this, 'restore', {
             get: function () {
                 return restore;
+            }
+        });
+
+        Object.defineProperty(this, 'restoreTool', {
+            get: function () {
+                return restoreTool;
             }
         });
 
