@@ -413,12 +413,16 @@ class WindowPane {
         let autoClose = false;
 
         function isOutsideOfWindow(event) {
+          if (event.target && event.target.parentElement == shell) {
+            return false
+          } else {
             const absLeft = Ui.absoluteLeft(shell);
             const absTop = Ui.absoluteTop(shell);
             const pageX = 'pageX' in event ? event.pageX : event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
             const pageY = 'pageY' in event ? event.pageY : event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
             return pageX < absLeft || pageX > absLeft + shell.offsetWidth ||
                 pageY < absTop || pageY > absTop + shell.offsetHeight;
+          }
         }
 
         let autoCloseMouseDownReg = null;
