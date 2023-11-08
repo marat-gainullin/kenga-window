@@ -36,6 +36,19 @@ class WindowPane {
         const caption = document.createElement('div');
         caption.className = 'p-window-caption';
 
+        let moveable = true;
+        let resizable = true;
+        let minimizable = true;
+        var minimized = false;
+        let maximizable = true;
+        let closable = true;
+        var maximized = false;
+        let undecorated = false;
+        const opacity = 1;
+        let alwaysOnTop = false;
+        let locationByPlatform = false;
+        let showAtCenter = true;
+
         function decorationOnMove(element, onMove) {
             Ui.on(element, Ui.Events.MOUSEDOWN, downEvent => {
                 downEvent.stopPropagation();
@@ -60,12 +73,14 @@ class WindowPane {
         }
 
         decorationOnMove(caption, (snapshot, event) => {
-            const movePageX = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-            const movePageY = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-            const newLeft = snapshot.startLeft + movePageX - snapshot.downPageX;
-            const newTop = snapshot.startTop + movePageY - snapshot.downPageY;
-            shell.style.left = `${newLeft >= 0 ? newLeft : 0}px`;
-            shell.style.top = `${newTop >= 0 ? newTop : 0}px`;
+            if (moveable) {
+                const movePageX = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+                const movePageY = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+                const newLeft = snapshot.startLeft + movePageX - snapshot.downPageX;
+                const newTop = snapshot.startTop + movePageY - snapshot.downPageY;
+                shell.style.left = `${newLeft >= 0 ? newLeft : 0}px`;
+                shell.style.top = `${newTop >= 0 ? newTop : 0}px`;
+            }
         });
 
         let image = null;
@@ -83,37 +98,45 @@ class WindowPane {
         });
 
         function moveLeft(snapshot, event) {
-            const movePageX = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-            let newLeft = snapshot.startLeft + movePageX - snapshot.downPageX;
-            newLeft = newLeft >= 0 ? newLeft : 0;
-            let newWidth = snapshot.startWidth - (newLeft - snapshot.startLeft);
-            newWidth = newWidth >= 0 ? newWidth : 0;
-            shell.style.left = `${newLeft}px`;
-            content.style.width = `${newWidth}px`;
+            if (resizable) {
+                const movePageX = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+                let newLeft = snapshot.startLeft + movePageX - snapshot.downPageX;
+                newLeft = newLeft >= 0 ? newLeft : 0;
+                let newWidth = snapshot.startWidth - (newLeft - snapshot.startLeft);
+                newWidth = newWidth >= 0 ? newWidth : 0;
+                shell.style.left = `${newLeft}px`;
+                content.style.width = `${newWidth}px`;
+            }
         }
 
         function moveRight(snapshot, event) {
-            const movePageX = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-            let newWidth = snapshot.startWidth + movePageX - snapshot.downPageX;
-            newWidth = newWidth >= 0 ? newWidth : 0;
-            content.style.width = `${newWidth}px`;
+            if (resizable) {
+                const movePageX = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+                let newWidth = snapshot.startWidth + movePageX - snapshot.downPageX;
+                newWidth = newWidth >= 0 ? newWidth : 0;
+                content.style.width = `${newWidth}px`;
+            }
         }
 
         function moveTop(snapshot, event) {
-            const movePageY = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-            let newTop = snapshot.startTop + movePageY - snapshot.downPageY;
-            newTop = newTop >= 0 ? newTop : 0;
-            let newHeight = snapshot.startHeight - (newTop - snapshot.startTop);
-            newHeight = newHeight >= 0 ? newHeight : 0;
-            shell.style.top = `${newTop}px`;
-            content.style.height = `${newHeight}px`;
+            if (resizable) {
+                const movePageY = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+                let newTop = snapshot.startTop + movePageY - snapshot.downPageY;
+                newTop = newTop >= 0 ? newTop : 0;
+                let newHeight = snapshot.startHeight - (newTop - snapshot.startTop);
+                newHeight = newHeight >= 0 ? newHeight : 0;
+                shell.style.top = `${newTop}px`;
+                content.style.height = `${newHeight}px`;
+            }
         }
 
         function moveBottom(snapshot, event) {
-            const movePageY = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-            let newHeight = snapshot.startHeight + movePageY - snapshot.downPageY;
-            newHeight = newHeight >= 0 ? newHeight : 0;
-            content.style.height = `${newHeight}px`;
+            if (resizable) {
+                const movePageY = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+                let newHeight = snapshot.startHeight + movePageY - snapshot.downPageY;
+                newHeight = newHeight >= 0 ? newHeight : 0;
+                content.style.height = `${newHeight}px`;
+            }
         }
 
         const t = document.createElement('div');
@@ -250,23 +273,14 @@ class WindowPane {
                 return modalMask;
             }
         });
-        let resizable = true;
-        let minimizable = true;
-        var minimized = false;
-        let maximizable = true;
-        let closable = true;
-        var maximized = false;
-        let undecorated = false;
-        const opacity = 1;
-        let alwaysOnTop = false;
-        let locationByPlatform = false;
-        let showAtCenter = true;
 
         function updateToolsVisibility() {
             minimizeTool.style.display = minimizable && !minimized ? '' : 'none';
             maximizeTool.style.display = maximizable && !maximized && !minimized ? '' : 'none';
             restoreTool.style.display = minimized || maximized ? '' : 'none';
             closeTool.style.display = closable ? '' : 'none';
+            [t, l, r, b, tl, tr, bl, br].forEach(item => item.style.display = resizable ? '' : 'none')
+            caption.style.cursor = moveable ? '' : 'auto'
         }
 
         updateToolsVisibility();
@@ -277,6 +291,15 @@ class WindowPane {
             },
             set: function (aValue) {
                 resizable = !!aValue;
+                updateToolsVisibility();
+            }
+        });
+        Object.defineProperty(this, 'moveable', {
+            get: function () {
+                return moveable;
+            },
+            set: function (aValue) {
+                moveable = !!aValue;
                 updateToolsVisibility();
             }
         });

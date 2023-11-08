@@ -1,6 +1,6 @@
 {
   "name": "kenga-window",
-  "version": "0.0.41",
+  "version": "0.0.43",
   "description": "Kenga popup window.",
   "repository": "https://github.com/marat-gainullin/kenga-window.git",
   "author": "marat-gainullin <mg@altsoft.biz>",
@@ -13,7 +13,7 @@
     "lib": "rollup -c rollup.lib.config.js"
   },
   "dependencies": {
-    "kenga": "0.0.51"
+    "kenga": "0.0.52"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.8",
@@ -32,6 +32,6 @@
     "rollup-plugin-styles": "^3.14.1",
     "shelljs": "^0.8.4",
     "septima-model": "0.0.25",
-    "kenga-containers": "^0.0.55"
+    "kenga-containers": "^0.0.57"
   }
 }

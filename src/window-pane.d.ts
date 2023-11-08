@@ -11,6 +11,7 @@ export default class WindowPane {
   element: HTMLElement;
   modalMask: HTMLElement;
   resizable: boolean;
+  moveable: boolean;
   minimizable: boolean;
   minimizeTool: HTMLElement
   maximizable: boolean;
