@@ -448,6 +448,10 @@ class WindowPane {
           }
         }
 
+        function isPopupOption(element) {
+          return element.tagName == 'OPTION' && element.parentElement && element.parentElement.tagName == 'SELECT' && element.parentElement.size <= 1
+        }
+
         let autoCloseMouseDownReg = null;
         let autoCloseTouchStartReg = null;
 
@@ -462,7 +466,7 @@ class WindowPane {
             }
             if (autoClose && shell.parentElement) {
                 autoCloseMouseDownReg = Ui.on(document, Ui.Events.MOUSEDOWN, evt => {
-                    if (isOutsideOfWindow(evt) && evt.clientX < document.documentElement.offsetWidth /* click on scrollbar shouldn't lead to closing of a window */) {
+                    if (isOutsideOfWindow(evt) && !isPopupOption(evt.target) && evt.clientX < document.documentElement.offsetWidth /* click on scrollbar shouldn't lead to closing of a window */) {
                         close();
                     }
                 }, true);
