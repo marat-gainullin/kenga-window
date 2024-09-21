@@ -1,6 +1,6 @@
 {
   "name": "kenga-window",
-  "version": "0.0.46",
+  "version": "0.0.47",
   "description": "Kenga popup window.",
   "repository": "https://github.com/marat-gainullin/kenga-window.git",
   "author": "marat-gainullin <mg@altsoft.biz>",
@@ -13,7 +13,7 @@
     "upload": "rimraf ./build && rollup -c rollup.lib.config.mjs && npm publish ./build/lib"
   },
   "dependencies": {
-    "kenga": "0.0.54"
+    "kenga": "0.0.55"
   },
   "devDependencies": {
     "@babel/runtime": "^7.15.3",
