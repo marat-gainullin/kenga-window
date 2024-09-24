@@ -323,7 +323,7 @@ class WindowPane {
         });
         Object.defineProperty(this, 'maximizeTool', {
             get: function () {
-                return minimizeTool;
+                return maximizeTool;
             }
         });
         Object.defineProperty(this, 'closable', {

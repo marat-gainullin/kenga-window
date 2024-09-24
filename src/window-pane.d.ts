@@ -18,6 +18,7 @@ export default class WindowPane {
   maximizeTool: HTMLElement
   closable: boolean;
   closeTool: HTMLElement
+  restoreTool: HTMLElement
   minimized: boolean;
   maximized: boolean;
   undecorated: boolean;
