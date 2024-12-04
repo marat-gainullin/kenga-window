@@ -1,6 +1,6 @@
 {
   "name": "kenga-window",
-  "version": "0.0.54",
+  "version": "0.0.55",
   "description": "Kenga popup window.",
   "repository": "https://github.com/marat-gainullin/kenga-window.git",
   "author": "marat-gainullin <mg@altsoft.biz>",
@@ -16,7 +16,7 @@
     "kenga": "0.0.60"
   },
   "devDependencies": {
-    "kenga-containers": "^0.0.69",
+    "kenga-containers": "^0.0.70",
     "@babel/runtime": "^7.15.3",
     "@babel/core": "^7.15.0",
     "@babel/plugin-transform-runtime": "^7.15.0",
